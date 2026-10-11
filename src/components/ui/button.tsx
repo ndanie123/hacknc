@@ -5,14 +5,16 @@ import { cva, type VariantProps } from "class-variance-authority";
 import { cn } from "@/lib/utils";
 
 const buttonVariants = cva(
-  "inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-full text-sm font-bold cursor-pointer transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 disabled:cursor-not-allowed [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0",
+  "inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-bold cursor-pointer transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 disabled:cursor-not-allowed [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0",
   {
     variants: {
       variant: {
-        default: "gloss-aqua text-primary-foreground hover:brightness-110 active:brightness-95",
-        leaf: "gloss-leaf text-leaf-foreground hover:brightness-110 active:brightness-95",
-        lilac: "gloss-lilac text-lilac-foreground hover:brightness-110 active:brightness-95",
-        glass: "glass text-foreground hover:bg-card",
+        default: "bg-primary text-primary-foreground shadow-sm hover:bg-primary/90",
+        leaf: "bg-leaf text-leaf-foreground shadow-sm hover:bg-leaf/90",
+        lilac: "bg-lilac text-lilac-foreground shadow-sm hover:bg-lilac/90",
+        lilacSoft:
+          "bg-lilac-glow text-lilac-deep shadow-sm hover:bg-lilac hover:text-lilac-foreground",
+        glass: "border border-border bg-card text-foreground hover:bg-muted",
         destructive: "bg-destructive text-destructive-foreground shadow-sm hover:bg-destructive/90",
         outline:
           "border border-input bg-card shadow-sm hover:bg-accent hover:text-accent-foreground",
