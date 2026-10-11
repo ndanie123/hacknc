@@ -35,3 +35,7 @@ dist-ssr
 .env
 .env.*
 !.env.example
+
+# Temporary files
+.tmp_make/
+.tmp_make_repo/

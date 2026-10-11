@@ -15,9 +15,9 @@ function AuthLayout() {
   }, [user, loading, navigate]);
 
   return (
-    <div className="min-h-screen pb-16">
+    <div className="companion-workspace min-h-screen pb-16">
       <AppHeader />
-      <main className="mx-auto w-[min(1100px,calc(100%-1.5rem))] pt-8">
+      <main className="mx-auto w-[min(1100px,calc(100%-3rem))] pt-10">
         {loading || !user ? <p className="text-center text-muted-foreground">Loading…</p> : <Outlet />}
       </main>
     </div>

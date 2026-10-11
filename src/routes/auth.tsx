@@ -1,5 +1,5 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
-import { useEffect, useState, type FormEvent } from "react";
+import { cloneElement, isValidElement, useEffect, useId, useState, type FormEvent } from "react";
 import { toast } from "sonner";
 import { HeartPulse, Stethoscope } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
@@ -20,10 +20,12 @@ export const Route = createFileRoute("/auth")({
   }),
   head: () => ({
     meta: [
-      { title: "Sign in or create an account — AeroHealth" },
-      { name: "description", content: "Sign in to AeroHealth or create a patient or provider account." },
-      { property: "og:title", content: "Sign in — AeroHealth" },
+      { title: "Sign in or create an account — Log Companion" },
+      { name: "description", content: "Sign in to Log Companion or create a patient or provider account." },
+      { property: "og:title", content: "Sign in — Log Companion" },
       { property: "og:description", content: "Patient and provider accounts for structured health logs." },
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary_large_image" },
     ],
   }),
   component: AuthPage,
@@ -38,6 +40,11 @@ function AuthPage() {
   const [busy, setBusy] = useState(false);
   const [sent, setSent] = useState(false);
   const [f, setF] = useState({ email: "", password: "", full_name: "", date_of_birth: "", organization: "", job_title: "" });
+
+  useEffect(() => {
+    setMode(search.mode ?? "signin");
+    setType(search.type ?? "patient");
+  }, [search.mode, search.type]);
 
   useEffect(() => {
     if (!loading && user) navigate({ to: "/dashboard" });
@@ -83,10 +90,10 @@ function AuthPage() {
   }
 
   return (
-    <div className="min-h-screen">
+    <div className="companion-auth companion-grid min-h-screen">
       <AppHeader />
       <main className="mx-auto flex w-[min(480px,calc(100%-1.5rem))] flex-col py-12">
-        <div className="glass rounded-[2rem] p-8">
+        <div className="glass rounded-lg p-6 sm:p-10">
           {sent ? (
             <div className="text-center">
               <h1 className="text-2xl font-bold">Check your email</h1>
@@ -107,22 +114,23 @@ function AuthPage() {
                     { id: "patient", label: "Patient", icon: HeartPulse },
                     { id: "provider", label: "Provider", icon: Stethoscope },
                   ] as const).map((o) => (
-                    <button
+                    <Button variant="ghost"
                       key={o.id}
                       type="button"
                       onClick={() => setType(o.id)}
+                      aria-pressed={type === o.id}
                       className={cn(
-                        "flex flex-col items-center gap-2 rounded-2xl border-2 p-4 font-bold transition-all",
+                        "flex h-24 flex-col items-center gap-2 rounded-lg border p-4 font-bold transition-all",
                         type === o.id
                           ? o.id === "provider"
                             ? "border-lilac bg-lilac-soft text-lilac"
-                            : "border-primary bg-card"
+                            : "border-primary bg-secondary text-primary"
                           : "border-transparent bg-muted text-muted-foreground",
                       )}
                     >
                       <o.icon className="h-6 w-6" />
                       {o.label}
-                    </button>
+                    </Button>
                   ))}
                 </div>
               )}
@@ -142,7 +150,7 @@ function AuthPage() {
                 )}
                 <Field label="Email"><Input type="email" required value={f.email} onChange={set("email")} /></Field>
                 <Field label="Password"><Input type="password" required minLength={8} value={f.password} onChange={set("password")} /></Field>
-                <Button type="submit" className="w-full" size="lg" disabled={busy}>
+                <Button type="submit" variant={mode === "signup" && type === "provider" ? "lilac" : "default"} className="w-full" size="lg" disabled={busy}>
                   {busy ? "Please wait…" : mode === "signin" ? "Sign in" : "Create account"}
                 </Button>
               </form>
@@ -156,9 +164,9 @@ function AuthPage() {
 
               <p className="mt-6 text-center text-sm text-muted-foreground">
                 {mode === "signin" ? "New here?" : "Already have an account?"}{" "}
-                <button className="font-bold text-lilac" onClick={() => setMode(mode === "signin" ? "signup" : "signin")}>
+                <Button variant="ghost" className="h-auto p-0 font-bold text-lilac" onClick={() => setMode(mode === "signin" ? "signup" : "signin")}>
                   {mode === "signin" ? "Create an account" : "Sign in"}
-                </button>
+                </Button>
               </p>
             </>
           )}
@@ -169,10 +177,11 @@ function AuthPage() {
 }
 
 function Field({ label, children }: { label: string; children: React.ReactNode }) {
+  const id = useId();
   return (
     <div className="space-y-1.5">
-      <Label className="font-bold">{label}</Label>
-      {children}
+      <Label htmlFor={id} className="font-bold">{label}</Label>
+      {isValidElement<{ id?: string }>(children) ? cloneElement(children, { id }) : children}
     </div>
   );
 }
