@@ -111,7 +111,7 @@ function LogDetail() {
   return (
     <div className="space-y-6">
       <Button asChild variant="glass" size="sm">
-        <Link to="/dashboard"><ArrowLeft /> Your logs</Link>
+        <Link to="/dashboard"><ArrowLeft /> {isOwner ? "Your logs" : "Shared logs"}</Link>
       </Button>
       <div className="grid gap-6 lg:grid-cols-[1.6fr_1fr]">
         <article className="glass rounded-lg p-8">
